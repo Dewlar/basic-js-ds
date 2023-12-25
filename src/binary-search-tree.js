@@ -16,29 +16,29 @@ class BinarySearchTree {
   }
 
   add(data) {
-    this.head = addWithin(this.head, data);
+    this.head = addNode(this.head, data);
 
-    function addWithin(node, data) {
+    function addNode(node, data) {
       if (!node) return new Node(data);
       if (node.data === data) return node;
 
-      if (data < node.data) node.left = addWithin(node.left, data);
-      else node.right = addWithin(node.right, data);
+      if (data < node.data) node.left = addNode(node.left, data);
+      else node.right = addNode(node.right, data);
 
       return node;
     }
   }
 
   has(data) {
-    return searchWithin(this.head, data);
+    return searchData(this.head, data);
 
-    function searchWithin(node, data) {
+    function searchData(node, data) {
       if (!node) return false;
       if (node.data === data) return true;
 
       return data < node.data
-        ? searchWithin(node.left, data)
-        : searchWithin(node.right, data);
+        ? searchData(node.left, data)
+        : searchData(node.right, data);
     }
   }
 
@@ -65,10 +65,12 @@ class BinarySearchTree {
       if (data < node.data) {
         node.left = removeNode(node.left, data);
         return node;
-      } else if (data > node.data) {
+      }
+      if (data > node.data) {
         node.right = removeNode(node.right, data);
         return node;
-      } else {
+      }
+      if (data === node.data) {
         if (!node.left && !node.right) return null;
         if (!node.left) {
           node = node.right;
@@ -79,34 +81,36 @@ class BinarySearchTree {
           return node;
         }
 
-        //node.left is a start point for searching max of the left elements
-        let maxFromLeft = node.left;
-        //max will be always in right side
-        while (maxFromLeft.right) {
-          maxFromLeft = maxFromLeft.right;
+        let maxNodeFromLeft = node.left;
+        while (maxNodeFromLeft.right) {
+          maxNodeFromLeft = maxNodeFromLeft.right;
         }
-        node.data = maxFromLeft.data;
+        node.data = maxNodeFromLeft.data;
 
-        node.left = removeNode(node.left, maxFromLeft.data);
+        node.left = removeNode(node.left, maxNodeFromLeft.data);
         return node;
       }
     }
   }
 
   min() {
-    let node = this.head;
-    while (node.left) {
-      node = node.left;
-    }
-    return node.data;
+    // return maxData(this.head)
+    // function maxData(node) {
+    //   return node.left ? maxData(node.left) : node.data;
+    // }
+    return this.#maxMin(this.head, 'left');
   }
 
   max() {
-    let node = this.head;
-    while (node.right) {
-      node = node.right;
-    }
-    return node.data;
+    // return maxData(this.head)
+    // function maxData(node) {
+    //   return node.right ? maxData(node.right) : node.data;
+    // }
+    return this.#maxMin(this.head, 'right');
+  }
+
+  #maxMin(node, direction) {
+    return node[direction] ? this.#maxMin(node[direction], direction) : node.data;
   }
 }
 
